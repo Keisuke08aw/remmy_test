@@ -24,11 +24,21 @@ int main(int argc, char const *argv[])
     //             5, 6, 7, 8,
     //             9, 10, 11, 12;
 
-    Eigen::MatrixXd Jacobian(4, 4);
-    Jacobian << 1, 1, 1, 4,
-        1, 1, 2, 4,
-        1, 1, 3, 4,
-        1, 1, 4, 4;
+    Eigen::MatrixXd A(4, 4);
+    A << 1, 2, 3, 4,
+        5, 1, 2, 6,
+        1, 9, 3, 5,
+        8, 1, 24, 4;
+
+    Eigen::MatrixXd B(4, 4);
+    B << 1, 2, 3, 4,
+        1, 9, 3, 5,
+        8, 1, 24, -4,
+        5, 1, 2, 6;
+
+    Eigen::MatrixXd Y = A + B;
+
+    Eigen::MatrixXd X = A *B;
 
     /* code */
     std::vector<float> data;
@@ -44,12 +54,12 @@ int main(int argc, char const *argv[])
     // printf("%d", data[2]);
     // printf("%d", data[3]);
 
-    Eigen::MatrixXf A = Eigen::MatrixXf::Zero(2, 2);
-    A(0, 0) = 2;
-    A(1, 1) = 5;
-
-    // std::cout << X << std::endl;
-    std::cout << Jacobian << std::endl;
+    // Eigen::MatrixXf A = Eigen::MatrixXf::Zero(2, 2);
+    // A(0, 0) = 2;
+    // A(1, 1) = 5;
+    std::cout << Y << std::endl;
+    std::cout << X << std::endl;
+    // std::cout << Jacobian << std::endl;
 
     // printf("AAAAAAA");
     return 0;

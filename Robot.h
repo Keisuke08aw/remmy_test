@@ -51,13 +51,18 @@ std::vector<float> Robot::direct_kinematics(std::vector<float> &joint_theta_vec)
         end_effector_vec.push_back(pz);
     }
 
-    return end_effector_vec
+    return end_effector_vec;
 }
 
 //ある手先座標(x,y,z)を入れて、すべての関節(θ1, θ2, θ3, θ4)を返す関数
-void inverse_kinematics(std::vector<float> &target_vec);
+void inverse_kinematics(std::vector<float> &target_vec)
 {
-    inv_Jacobian
+    std::vector<int> target_vec = {1, 1, 1};
+
+
+    Eigen::MatrixXd q_i_1(4, 1);
+
+    q_i_1 = qi + k *inv_Jacobian;;
 }
 
 std::vector<float> inv_Jacobian(std::vector<float> &target_vec)
