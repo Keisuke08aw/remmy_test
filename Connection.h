@@ -13,14 +13,16 @@ class Connection
     int open();
     int close();
 
-    //use explicit pointer conversion
+    //send data to the robot. use explicit pointer convertion
+
     //ロボットに手先座標(x,y,z)を送る
     //vector(0~255, 0~255, 0~255)で送る
     //その結果をintで返す
     //data.size()==12らしい
     int send(std::vector<unsigned char> &data);
 
-    //use explicit pointer conversion
+    //receive state of the robot. record to data. use explicit pointer convertion
+
     //ロボットの関節の位置(x,y,z)の情報を受け取り、その値を記録する
     //手先座標だけ？それともすべての関節？
     //(x,y,z)をvector(0~255, 0~255, 0~255)で順キネの値を受け取る
