@@ -18,7 +18,7 @@ class Connection
     //ロボットに手先座標(x,y,z)を送る
     //vector(0~255, 0~255, 0~255)で送る
     //その結果をintで返す
-    //data.size()==12らしい
+    //data.size()==12らしい、だから多分θ1~θ3だけ？
     int send(std::vector<unsigned char> &data);
 
     //receive state of the robot. record to data. use explicit pointer convertion

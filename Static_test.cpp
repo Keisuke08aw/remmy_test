@@ -34,7 +34,8 @@ class Robot
     //     return joint1_vec;
     // }
 };
-Eigen::MatrixXd Robot::joint1_vec(1, 3);
+Eigen::MatrixXd Robot::joint1_vec(3, 1);
+// Robot::joint1_vec << 1,2,3
 // int Robot::joint1_vec(1,3);
 
 int main()
@@ -45,6 +46,6 @@ int main()
     Eigen::MatrixXd A = robot.getJoint();
     // int A = robot.getJoint();
     // printf("%d\n", robot.getJoint()[0]);
-    std::cout << A << std::endl;
+    std::cout << A(0) << std::endl;
     return 0;
 }
