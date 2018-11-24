@@ -4,8 +4,6 @@
 
 #include <iostream>
 class Robot{
-  int age = 0;
-
   public:
     Robot() {}
     ~Robot() {}
@@ -29,15 +27,33 @@ void change_data(std::vector<float> &data_array)
 
 int main(int argc, char const *argv[])
 {
-    // Eigen::Matrix3d M;
-    // M << 1, 2, 3,
-    //     5, 6, 7,
-    //     9, 10, 11;
+    // float x=1.0;
+    // int i = 0x41;
+    // float *num = &x;
 
-    // Eigen::MatrixXd Jacobian(4, 4);
-    // Jacobian << 1, 2, 3, 4,
-    //             5, 6, 7, 8,
-    //             9, 10, 11, 12;
+    // std::vector<unsigned char> vec(4);
+    // vec[0] = 1;
+    // vec[1] = 2;
+    char x = -100;
+    unsigned char y;
+
+    // y = (unsigned char)x;       // C static
+    y = *(unsigned char *)(&x); //
+    x = *(signed char *)(&y);
+
+    // printf("%d", y);
+    // printf("%d", x);
+
+    // std::cout << ch+ch2 << std::endl;
+    // std::cout << x << std::endl;
+
+    // std::cout << &aaaa << std::endl;
+
+
+    std::vector<float> vec{1.0,2.0,3.0};
+
+    std::cout << &vec << std::endl;
+
 
     Eigen::MatrixXd A(4, 4);
     A << 1*2, 2, 3, 4,
@@ -76,10 +92,10 @@ int main(int argc, char const *argv[])
     // std::cout << X << std::endl;
     // std::cout << Jacobian << std::endl;
 
-    std::cout << age << std::endl;
+    // std::cout << i << std::endl;
 
-    ch_data(Robot::age);
-    std::cout << Robot::age << std::endl;
+    // ch_data(Robot::age);
+    // std::cout << Robot::age << std::endl;
 
     // printf("AAAAAAA");
     return 0;
