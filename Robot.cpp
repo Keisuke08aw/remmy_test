@@ -3,23 +3,19 @@
 #include "Eigen/Core"
 #include <math.h>
 
-class Point
-{
-  public:
-    Point() {}
-    ~Point() {}
-    double x;
-    double y;
-    double z;
-};
-
 class Robot
 {
-    std::vector<float> target_vec = {20, 0, 0};
+  private:
+    Eigen::MatrixXd joint1_vec(1, 4);
+    //x,y,z, θ
+    joint1_vec << 0.0, 0.0, 0.0, 0.0;
+    Eigen::MatrixXd joint2_vec(1, 4);
+    joint2_vec << 20.0, 0.0, 0.0, 0.0;
+    Eigen::MatrixXd joint3_vec(1, 4);
+    joint3_vec << 20.0, 0.0, 0.0, 0.0;
 
   public:
     Robot() {}
-    ~Robot() {}
 
     std::vector<double> joint0_vec{0, 0, 0, 0};
     std::vector<double> joint1_vec{0, 0, 0, 0};
@@ -34,12 +30,15 @@ class Robot
 
     //ある関節(θ1, θ2, θ3, θ4)を入れて、4×4の逆ヤコビ行列を返す関数
     std::vector<double> inverse_kinematics(std::vector<double> &target_vec);
+    ~Robot() {}
 };
 
 //ある関節(θ1, θ2, θ3, θ4)を入れて、手先座標(x,y,z)を返す関数
 std::vector<double> Robot::direct_kinematics(std::vector<double> &joint_theta_vec)
 {
-    float rad1, rad2, rad3;
+    rad1=joint_theta_vec[0];
+    rad2 = joint_theta_vec[1];
+    rad3 = joint_theta_vec[2];
 
     Eigen::MatrixXd T_0_4(4, 4);
 
@@ -79,32 +78,37 @@ std::vector<double> Robot::direct_kinematics(std::vector<double> &joint_theta_ve
 }
 
 //ある手先座標(x,y,z)を入れて、すべての関節(θ1, θ2, θ3, θ4)を返す関数
-std::vector<double> inverse_kinematics(std::vector<double> &end_effector_vec)
+std::vector<double> inverse_kinematics(std::vector<double> &target_vec)
 {
-    float x,y,z;
+    Robot robot;
+    
+    float x, y, z;
     float rad1, rad2, rad3;
+    float theta1, theta2, theta3;
+
+
 
     Eigen::MatrixXd Jaconvian(3, 3);
-    Jaconvian(0,0) = -sin(rad1)*cos(rad2)*(5*cos(rad3)+5) + (-sin(rad1))*(5*sin(rad2)*sin(rad3)+10);
-    Jaconvian(0,1) = cos(rad1)*(-sin(rad2))*(5*cos(rad3)+5)+0;
-    Jaconvian(0,2) = cos(rad1)*cos(rad2)*5*(-sin(rad3)) + cos(rad1)*5*sin(rad2)*cos(rad3);
+    Jaconvian(0, 0) = -sin(rad1) * cos(rad2) * (5 * cos(rad3) + 5) + (-sin(rad1)) * (5 * sin(rad2) * sin(rad3) + 10);
+    Jaconvian(0, 1) = cos(rad1) * (-sin(rad2)) * (5 * cos(rad3) + 5) + 0;
+    Jaconvian(0, 2) = cos(rad1) * cos(rad2) * 5 * (-sin(rad3)) + cos(rad1) * 5 * sin(rad2) * cos(rad3);
 
-    Jaconvian(1,0) = 5*cos(rad1)*cos(rad2)*(cos(rad3)+1) + 5*cos(rad1)*(sin(rad2)*sin(rad3)+2);
-    Jaconvian(1,1) = 5*sin(rad1)*(-sin(rad2))*(cos(rad3)+1) + 5*sin(rad1)*cos(rad2)*sin(rad3);
-    Jaconvian(1,2) = 5*sin(rad1)*cos(rad2)*(-sin(rad3)) + 5*sin(rad1)*sin(rad2)*cos(rad3);
+    Jaconvian(1, 0) = 5 * cos(rad1) * cos(rad2) * (cos(rad3) + 1) + 5 * cos(rad1) * (sin(rad2) * sin(rad3) + 2);
+    Jaconvian(1, 1) = 5 * sin(rad1) * (-sin(rad2)) * (cos(rad3) + 1) + 5 * sin(rad1) * cos(rad2) * sin(rad3);
+    Jaconvian(1, 2) = 5 * sin(rad1) * cos(rad2) * (-sin(rad3)) + 5 * sin(rad1) * sin(rad2) * cos(rad3);
 
-    
+    Eigen::MatrixXd learning_rate(3, 1);
+    learning_rate << 0.01,
+        0.01,
+        0.01;
 
-
-    std::vector<double> learning_rate = {0.01, 0.01, 0.01};
     Eigen::MatrixXd q_i_1(4, 1);
 
     q_i_1 = qi + k * inv_Jacobian;
+
     ;
 }
 
 std::vector<double> inv_Jacobian(std::vector<double> &target_vec)
 {
-
-
 }
