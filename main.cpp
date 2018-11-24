@@ -11,7 +11,6 @@ int main(int argc, char const *argv[])
     int res1 = cn.open();
     if (res1 == 0)
     {
-        
         int return1 = cn.send(data);
     }
     else
@@ -19,7 +18,12 @@ int main(int argc, char const *argv[])
         printf("Error");
     }
 
+    std::vector<unsigned char> point_list;
 
+    point_list.push_back(9);
+    std::vector<unsigned char> *pointer = &point_list;
+
+    cn.send(const_cast<(std::vector<unsigned char*>)> pointer);
 
     return 0;
 }

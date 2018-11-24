@@ -34,12 +34,36 @@ int main(int argc, char const *argv[])
     // std::vector<unsigned char> vec(4);
     // vec[0] = 1;
     // vec[1] = 2;
-    char x = -100;
-    unsigned char y;
+    // char x = -100;
+    // unsigned char y;
 
     // y = (unsigned char)x;       // C static
-    y = *(unsigned char *)(&x); //
-    x = *(signed char *)(&y);
+    // y = *(unsigned char *)(&x); //
+    // x = *(signed char *)(&y);
+
+    // std::vector<unsigned char> vec1;
+    // unsigned char  std::string str
+
+    // vec1.push_back(1);
+    // vec1.push_back(2);
+    // vec1.push_back(3);
+    // vec1.push_back(4);
+    // vec1.push_back(3);
+    // vec1.push_back(3);
+    // vec1.push_back(3);
+
+    int **data;
+
+
+
+    // printf("%d")
+    // vec1.push_back(a2);
+    // vec1.push_back(a3);
+    // vec1.push_back(a4);
+
+    // printf("%d", (unsigned char)vec1.size());
+    // std::cout << vec[0] << std::endl;
+
 
     // printf("%d", y);
     // printf("%d", x);
@@ -50,33 +74,63 @@ int main(int argc, char const *argv[])
     // std::cout << &aaaa << std::endl;
 
 
-    std::vector<float> vec{1.0,2.0,3.0};
+    // std::vector<float> vec{1.0,2.0,3.0};
 
-    std::cout << &vec << std::endl;
+    // std::cout << &vec << std::endl;
+    float rad1,rad2,rad3 = 1.6;
 
+    Eigen::MatrixXd T_0_4(4, 4);
 
-    Eigen::MatrixXd A(4, 4);
-    A << 1*2, 2, 3, 4,
-        5, 1, 2, 6,
-        1, 9, 3, 5,
-        8, 1, 24, 4;
+    Eigen::MatrixXd T_0_1(4, 4);
+    Eigen::MatrixXd T_1_2(4, 4);
+    Eigen::MatrixXd T_2_3(4, 4);
+    Eigen::MatrixXd T_3_4(4, 4);
 
-    Eigen::MatrixXd B(4, 4);
-    B << 1, 2, 3, 4,
-        1, 9, 3, 5,
-        8, 1, 24, -4,
-        5, 1, 2, 6;
+    T_0_1 << cos(rad1), -sin(rad1), 0, 0,
+        sin(rad1), cos(rad1), 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1;
 
-    Eigen::MatrixXd Y = A + B;
+    T_1_2 << cos(rad2), sin(rad2), 0, 10,
+        0, 0, -1, 0,
+        -sin(rad2), cos(rad2), 0, 0,
+        0, 0, 0, 1;
 
-    Eigen::MatrixXd X = A *B;
+    T_2_3 << cos(rad3), -sin(rad3), 0, 5,
+        sin(rad3), cos(rad3), 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1;
 
-    /* code */
-    std::vector<float> data;
-    data.push_back(0);
-    data.push_back(1);
-    data.push_back(2);
-    data.push_back(3);
+    T_3_4 << 1, 0, 0, 5,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1;
+
+    T_0_4 = T_0_1 * T_1_2 * T_2_3 * T_3_4;
+    Eigen::MatrixXd X(4, 4);
+
+    // X = A*B;
+
+    std::cout << T_0_4 << std::endl;
+
+    for (int i = 0; i < 4; i++){
+        for (int j = 0; j < 4; j++){
+            std::cout << T_0_4(i, j) << std::endl;
+        }
+    }
+    // std::cout << T_0_4(0, 0) << std::endl;
+    // std::cout << T_0_4(0, 0) << std::endl;
+
+    // Eigen::MatrixXd Y = A + B;
+
+    // Eigen::MatrixXd X = A *B;
+
+    // /* code */
+    // std::vector<float> data;
+    // data.push_back(0);
+    // data.push_back(1);
+    // data.push_back(2);
+    // data.push_back(3);
 
     // change_data(data);
     // printf("%d\n", (int)data.size());

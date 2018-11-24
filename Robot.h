@@ -15,19 +15,16 @@ class Point
 
 class Robot
 {
-  std::vector<float> target_vec = {20, 0, 0};
+    std::vector<float> target_vec = {20, 0, 0};
 
   public:
     Robot() {}
     ~Robot() {}
 
-
     std::vector<double> joint0_vec{0, 0, 0, 0};
     std::vector<double> joint1_vec{0, 0, 0, 0};
     std::vector<double> joint2_vec{0, 0, 0, 0};
     std::vector<double> joint3_vec{0, 0, 0, 0};
-
-
 
     //ある関節(θ1, θ2, θ3, θ4)を入れて、手先座標(x,y,z)を返す関数
     std::vector<double> direct_kinematics(std::vector<double> &joint_theta_vec);
@@ -35,37 +32,69 @@ class Robot
     //ある手先座標(x,y,z)を入れて、すべての関節(θ1, θ2, θ3, θ4)を返す関数
     std::vector<double> inverse_kinematics(std::vector<double> &target_vec);
 
-        //ある関節(θ1, θ2, θ3, θ4)を入れて、4×4の逆ヤコビ行列を返す関数
+    //ある関節(θ1, θ2, θ3, θ4)を入れて、4×4の逆ヤコビ行列を返す関数
     std::vector<double> inverse_kinematics(std::vector<double> &target_vec);
 };
 
 //ある関節(θ1, θ2, θ3, θ4)を入れて、手先座標(x,y,z)を返す関数
 std::vector<double> Robot::direct_kinematics(std::vector<double> &joint_theta_vec)
 {
-    std::vector<double> end_effector_vec;
+    float rad1, rad2, rad3;
 
-    for (int i = 0; i < joint_theta_vec.size(); i++)
-    {
-        //ここで順運動学からpx, py, pzを求める
-        double px = 0;
-        double py = 1.0;
-        double pz = 2.2;
-        end_effector_vec.push_back(px);
-        end_effector_vec.push_back(py);
-        end_effector_vec.push_back(pz);
-    }
+    Eigen::MatrixXd T_0_4(4, 4);
+
+    Eigen::MatrixXd T_0_1(4, 4);
+    Eigen::MatrixXd T_1_2(4, 4);
+    Eigen::MatrixXd T_2_3(4, 4);
+    Eigen::MatrixXd T_3_4(4, 4);
+
+    T_0_1 << cos(rad1), -sin(rad1), 0, 0,
+        sin(rad1), cos(rad1), 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1;
+
+    T_1_2 << cos(rad2), sin(rad2), 0, 10,
+        0, 0, -1, 0,
+        -sin(rad2), cos(rad2), 0, 0,
+        0, 0, 0, 1;
+
+    T_2_3 << cos(rad3), -sin(rad3), 0, 5,
+        sin(rad3), cos(rad3), 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1;
+
+    T_3_4 << 1, 0, 0, 5,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1;
+
+    T_0_4 = T_0_1 * T_1_2 * T_2_3 * T_3_4;
+
+    std::vector<double> end_effector_vec;
+    end_effector_vec.push_back(T_0_4(0, 3));
+    end_effector_vec.push_back(T_0_4(1, 3));
+    end_effector_vec.push_back(T_0_4(2, 3));
 
     return end_effector_vec;
 }
 
 //ある手先座標(x,y,z)を入れて、すべての関節(θ1, θ2, θ3, θ4)を返す関数
-std::vector<double> inverse_kinematics(std::vector<double> &target_vec)
+std::vector<double> inverse_kinematics(std::vector<double> &end_effector_vec)
 {
-    double x1, x2, x3, x4 =0;
-    Eigen::MatrixXd delta_r(4, 1);
-    delta_r << sqrt(std::pow((target_vec[0] - x1), 2.0) + std::pow((target_vec[0] - y1), 2.0) + std::pow((target_vec[0] - z1), 2.0)),
-        sqrt(std::pow((target_vec[0] - x1), 2.0) + std::pow((target_vec[0] - y1), 2.0) + std::pow((target_vec[0] - z1), 2.0)),
-        sqrt(std::pow((target_vec[0] - x1), 2.0) + std::pow((target_vec[0] - y1), 2.0) + std::pow((target_vec[0] - z1), 2.0));
+    float x,y,z;
+    float rad1, rad2, rad3;
+
+    Eigen::MatrixXd Jaconvian(3, 3);
+    Jaconvian(0,0) = -sin(rad1)*cos(rad2)*(5*cos(rad3)+5) + (-sin(rad1))*(5*sin(rad2)*sin(rad3)+10);
+    Jaconvian(0,1) = cos(rad1)*(-sin(rad2))*(5*cos(rad3)+5)+0;
+    Jaconvian(0,2) = cos(rad1)*cos(rad2)*5*(-sin(rad3)) + cos(rad1)*5*sin(rad2)*cos(rad3);
+
+    Jaconvian(1,0) = 5*cos(rad1)*cos(rad2)*(cos(rad3)+1) + 5*cos(rad1)*(sin(rad2)*sin(rad3)+2);
+    Jaconvian(1,1) = 5*sin(rad1)*(-sin(rad2))*(cos(rad3)+1) + 5*sin(rad1)*cos(rad2)*sin(rad3);
+    Jaconvian(1,2) = 5*sin(rad1)*cos(rad2)*(-sin(rad3)) + 5*sin(rad1)*sin(rad2)*cos(rad3);
+
+    
+
 
     std::vector<double> learning_rate = {0.01, 0.01, 0.01};
     Eigen::MatrixXd q_i_1(4, 1);
@@ -76,5 +105,6 @@ std::vector<double> inverse_kinematics(std::vector<double> &target_vec)
 
 std::vector<double> inv_Jacobian(std::vector<double> &target_vec)
 {
+
 
 }
