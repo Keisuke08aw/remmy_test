@@ -16,16 +16,12 @@ class Connection
     //send data to the robot. use explicit pointer convertion
 
     //ロボットに手先座標(x,y,z)を送る
-    //vector(0~255, 0~255, 0~255)で送る
-    //その結果をintで返す
-    //data.size()==12らしい、だから多分θ1~θ3だけ？
+    //data.size()==12より、float to byteでx,y,zを送る
     int send(std::vector<unsigned char> &data);
 
     //receive state of the robot. record to data. use explicit pointer convertion
+    //多分、ロボットの手先座標を受け取り、recordする
 
-    //ロボットの関節の位置(x,y,z)の情報を受け取り、その値を記録する
-    //手先座標だけ？それともすべての関節？
-    //(x,y,z)をvector(0~255, 0~255, 0~255)で順キネの値を受け取る
     int receive(std::vector<unsigned char> &data);
 };
 
