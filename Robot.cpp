@@ -43,7 +43,7 @@ void Robot::set_Joint3Angle(float radian)
 }
 void Robot::set_Joint4_vec(float x, float y, float z)
 {
-    joint4_vec << x, y,z;
+    joint4_vec << x, y, z;
 }
 
 void Robot::set_hoge(int num)
@@ -58,8 +58,8 @@ int Robot::get_hoge()
 
 int Robot::hoge;
 float Robot::joint1_angle = M_PI / 2;
-float Robot::joint2_angle = -M_PI / 2;
-float Robot::joint3_angle = M_PI / 4;
+float Robot::joint2_angle = M_PI / 2;
+float Robot::joint3_angle = M_PI / 2;
 Eigen::MatrixXd Robot::joint4_vec(3, 1);
 
 //ある関節(θ1, θ2, θ3)を入れて、今の手先座標(x,y,z)を返す関数
@@ -129,17 +129,12 @@ Eigen::MatrixXd Robot::inverse_kinematics(std::vector<float> target_vec)
     float target_y = target_vec[1];
     float target_z = target_vec[2];
 
-    Eigen::MatrixXd value_matrix = robot.get_Joint4_vec();
-    float eng_effecotr_x = value_matrix(0);
-    float eng_effecotr_y = value_matrix(1);
-    float eng_effecotr_z = value_matrix(2);
+    Eigen::MatrixXd vec_p = robot.get_Joint4_vec();
+    float eng_effecotr_x = vec_p(0);
+    float eng_effecotr_y = vec_p(1);
+    float eng_effecotr_z = vec_p(2);
 
     float delta_x = sqrt(pow((target_x - eng_effecotr_x), 2));
-    // printf("target%f\r\n", target_x);
-
-    // printf("END%f\r\n", eng_effecotr_x);
-    // printf("DELTA%f\r\n", delta_x);
-
     float delta_y = sqrt(pow((target_y - eng_effecotr_y), 2));
     float delta_z = sqrt(pow((target_z - eng_effecotr_z), 2));
 
@@ -198,9 +193,9 @@ Eigen::MatrixXd Robot::inverse_kinematics(std::vector<float> target_vec)
     // printf("FFFFFFFFFFFFFFFFFFF\r\n");
 
     //学習率
-    learning_rate << 0.1, 0, 0,
-                    0, 0.1, 0,
-                0, 0, 0.1;
+    learning_rate << 1.8, 0, 0,
+                    0, 1.8, 0,
+                    0, 0, 1.8;
 
     // printf("GGGGGGGGGGGGGGGGGGGGG\r\n");
 
@@ -225,4 +220,26 @@ Eigen::MatrixXd Robot::inverse_kinematics(std::vector<float> target_vec)
     // printf("JJJJJJJJJJJJJJJJJJJ\r\n");
 
     return qi_1;
+}
+
+float Robot::delta(std::vector<float> target_vec)
+{
+    // printf("AAAAAAAAAAAAAAAAAAAA\r\n");
+    Robot robot;
+
+    Eigen::MatrixXd ri(3, 1);
+
+    float target_x = target_vec[0];
+    float target_y = target_vec[1];
+    float target_z = target_vec[2];
+
+    Eigen::MatrixXd vec_p = robot.get_Joint4_vec();
+    float eng_effecotr_x = vec_p(0);
+    float eng_effecotr_y = vec_p(1);
+    float eng_effecotr_z = vec_p(2);
+
+    float delta_xyz = sqrt(pow((target_x - eng_effecotr_x), 2) + pow((target_y - eng_effecotr_y), 2) + pow((target_z - eng_effecotr_z), 2));
+    //手先が目標に対してどれだけ離れているか計算
+
+    return delta_xyz;
 }

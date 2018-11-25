@@ -33,7 +33,9 @@ public:
   //ある手先座標(x,y,z)を入れて、次の関節の角度(θ1, θ2, θ3, θ4)を返す関数
   Eigen::MatrixXd inverse_kinematics(std::vector<float> target_vec);
 
-  int get_hoge();
+  float delta(std::vector<float> target_vec);
+
+      int get_hoge();
   void set_hoge(int num);
 
   ~Robot() {}
