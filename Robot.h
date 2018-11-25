@@ -28,7 +28,7 @@ public:
   void set_Joint4_vec(float x, float y, float z);
 
   //ある関節(θ1, θ2, θ3)を入れて、今の手先座標(x,y,z)を返す関数
-  void direct_kinematics(Eigen::MatrixXd vec_joint_angle);
+  std::vector<float> direct_kinematics(Eigen::MatrixXd vec_joint_angle);
 
   //ある手先座標(x,y,z)を入れて、次の関節の角度(θ1, θ2, θ3, θ4)を返す関数
   Eigen::MatrixXd inverse_kinematics(std::vector<float> target_vec);
