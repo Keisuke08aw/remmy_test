@@ -1,5 +1,4 @@
 #include <vector>
-#include "Connection.h"
 #include "Eigen/Core"
 // #include "stdio.h"
 #include <iostream>

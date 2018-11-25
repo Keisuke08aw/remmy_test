@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <vector>
 
+//https://os.mbed.com/forum/helloworld/topic/2053/?page=1#comment-54720
 
 std::vector<unsigned char> convert_Float_to_Byte(float num){
     std::vector<unsigned char> data;
