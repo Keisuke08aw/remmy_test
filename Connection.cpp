@@ -68,9 +68,9 @@ int Connection::send(std::vector<unsigned char> &data){
     robot.set_Target_vec(data);
 };
 
-// int Connection::receive(std::vector<unsigned char> &data){
+int Connection::receive(std::vector<unsigned char> &data){
 
-// };
+};
 
 std::vector<float> Connection::trajectory_vec_list;
 

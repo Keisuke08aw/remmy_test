@@ -68,7 +68,7 @@ int main(int argc, char const *argv[])
     {
         target_vec.push_back(target_z1[i]);
     }
-    connection.send
+    connection.send(target_vec);
 
     // convert_Byte_to_Float(result);
 
@@ -94,8 +94,8 @@ int main(int argc, char const *argv[])
     robot.set_Joint4_vec(px, py, pz);
     // qi_1 = robot.inverse_kinematics(target_vec);
 
-    // while ((float)robot.delta(target_vec) != 0.0)
-    // {
+    while ((float)robot.delta(target_vec) != 0.0)
+    {
     //     float delta_xyz =robot.delta(target_vec);
     //     // printf("%f\r\n", delta_xyz);
 
@@ -117,6 +117,11 @@ int main(int argc, char const *argv[])
 
     //     //手先座標をセットする
     //     robot.set_Joint4_vec(px, py, pz);
-    // }
+
+    
+    }
+
+
+
     return 0;
 }

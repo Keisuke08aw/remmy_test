@@ -13,7 +13,7 @@ private:
   //x, y, z
   static Eigen::MatrixXd joint4_vec;
 
-  static int hoge;
+  static std::vector<unsigned char> target_vec;
 
 public:
   Robot() {}
@@ -21,11 +21,13 @@ public:
   float get_Joint2Angle();
   float get_Joint3Angle();
   Eigen::MatrixXd get_Joint4_vec();
+  std::vector<float> get_target_vec();
 
   void set_Joint1Angle(float radian);
   void set_Joint2Angle(float radian);
   void set_Joint3Angle(float radian);
   void set_Joint4_vec(float x, float y, float z);
+  void set_Target_vec(std::vector<unsigned char> data);
 
   //ある関節(θ1, θ2, θ3)を入れて、今の手先座標(x,y,z)を返す関数
   std::vector<float> direct_kinematics(Eigen::MatrixXd vec_joint_angle);
@@ -35,8 +37,6 @@ public:
 
   float delta(std::vector<float> target_vec);
 
-      int get_hoge();
-  void set_hoge(int num);
 
   ~Robot() {}
 };

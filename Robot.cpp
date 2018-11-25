@@ -46,20 +46,33 @@ void Robot::set_Joint4_vec(float x, float y, float z)
     joint4_vec << x, y, z;
 }
 
-void Robot::set_hoge(int num)
+float convert_Byte_to_Float(std::vector<unsigned char> &data)
 {
-    hoge = num;
+    uint8_t bytes[sizeof(float)];
+    for (int i = 0; i < 4; i++)
+    {
+        bytes[i] = data[i];
+    }
+    float x_p = *(float *)(bytes); // convert bytes back to float
+    return x_p;
 }
 
-int Robot::get_hoge()
+void Robot::set_Target_vec(std::vector<unsigned char> data)
 {
-    return hoge;
+    float_data = convert_Byte_to_Float(data);
+    target_vec = float_data;
+}
+std::vector<float> Robot::get_target_vec()
+{
+    return target_vec;
 }
 
-int Robot::hoge;
+
+
 float Robot::joint1_angle = M_PI / 2;
 float Robot::joint2_angle = M_PI / 2;
 float Robot::joint3_angle = M_PI / 2;
+std::vector<float> target_vec;
 Eigen::MatrixXd Robot::joint4_vec(3, 1);
 
 //ある関節(θ1, θ2, θ3)を入れて、今の手先座標(x,y,z)を返す関数
@@ -194,8 +207,8 @@ Eigen::MatrixXd Robot::inverse_kinematics(std::vector<float> target_vec)
 
     //学習率
     learning_rate << 1.8, 0, 0,
-                    0, 1.8, 0,
-                    0, 0, 1.8;
+        0, 1.8, 0,
+        0, 0, 1.8;
 
     // printf("GGGGGGGGGGGGGGGGGGGGG\r\n");
 
