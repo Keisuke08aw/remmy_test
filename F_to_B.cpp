@@ -23,12 +23,10 @@ float convert_Byte_to_Float(std::vector<unsigned char> &data){
     for (int i = 0; i < 4; i++){
         bytes[i] = data[i];
         // printf(data)
-
     }
-
     float x_p = *(float *)(bytes); // convert bytes back to float
 
-    printf("%f", x_p);
+    printf("float %f\r\n", x_p);
     return x_p;
 }
 
