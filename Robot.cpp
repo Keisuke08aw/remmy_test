@@ -63,7 +63,7 @@ float Robot::joint3_angle;
 Eigen::MatrixXd Robot::joint4_vec(3, 1);
 
 //ある関節(θ1, θ2, θ3)を入れて、今の手先座標(x,y,z)を返す関数
-void direct_kinematics(Eigen::MatrixXd vec_joint_angle)
+void Robot::direct_kinematics(Eigen::MatrixXd vec_joint_angle)
 {
     Robot robot;
 
@@ -109,8 +109,9 @@ void direct_kinematics(Eigen::MatrixXd vec_joint_angle)
 }
 
 //ある手先座標(x,y,z)を入れて、次の関節の角度(θ1, θ2, θ3, θ4)を返す関数
-Eigen::MatrixXd inverse_kinematics(std::vector<float> target_vec)
+Eigen::MatrixXd Robot::inverse_kinematics(std::vector<float> target_vec)
 {
+    printf("AAAAAAAAAAAAAAAAAAAA");
     Robot robot;
 
     Eigen::MatrixXd q_i_1(3, 1);
@@ -149,6 +150,8 @@ Eigen::MatrixXd inverse_kinematics(std::vector<float> target_vec)
     Jaconvian(2, 1) = -5 * cos(rad2) * (cos(rad3) + 1) - 5 * cos(rad2) * sin(rad3);
     Jaconvian(2, 2) = -5 * sin(rad2) * (-sin(rad3)) + 5 * cos(rad2) * cos(rad3);
 
+    printf("BBBBBBBBBBBBBBBBB");
+
     //逆ヤコビアン
     inv_Jaconvian = Jaconvian.inverse();
 
@@ -162,6 +165,8 @@ Eigen::MatrixXd inverse_kinematics(std::vector<float> target_vec)
     learning_rate << 0.01, 0.01, 0.01;
 
     q_i_1 = qi + learning_rate * inv_Jaconvian * ri;
+
+    printf("CCCCCCCCCCCCCCCCCCCCCCC");
 
     return q_i_1;
 }
