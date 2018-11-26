@@ -46,7 +46,9 @@ int main(int argc, char const *argv[])
     printf("\r\n");
     printf("First target x %.2f\r\n", x);
     printf("First target y %.2f\r\n", y);
-    printf("First target z %.2f\r\n\r\n", z);
+    printf("First target z %.2f\r\n", z);
+    printf("/////////////////////////////////\r\n");
+
 
     std::vector<unsigned char> target_p;
     std::vector<unsigned char> target_x = convert_Float_to_Byte(x);
@@ -57,17 +59,17 @@ int main(int argc, char const *argv[])
     target_p.insert(target_p.end(), target_y.begin(), target_y.end());
     target_p.insert(target_p.end(), target_z.begin(), target_z.end());
 
-    printf("target bytes0 %d\r\n", target_p[0]);
-    printf("target bytes1 %d\r\n", target_p[1]);
-    printf("target bytes2 %d\r\n", target_p[2]);
-    printf("target bytes3 %d\r\n\r\n", target_p[3]);
+    // printf("target bytes0 %d\r\n", target_p[0]);
+    // printf("target bytes1 %d\r\n", target_p[1]);
+    // printf("target bytes2 %d\r\n", target_p[2]);
+    // printf("target bytes3 %d\r\n\r\n", target_p[3]);
 
     Robot robot;
 
     // //関節の初期値を適当に決める
-    float rad1 = 0.0;
-    float rad2 = M_PI / 2;
-    float rad3 = M_PI / 2;
+    float rad1 = M_PI/4;
+    float rad2 = M_PI/2;
+    float rad3 = M_PI/2;
 
     robot.set_Joint1Angle(rad1);
     robot.set_Joint2Angle(rad2);
