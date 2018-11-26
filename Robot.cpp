@@ -46,33 +46,64 @@ void Robot::set_Joint4_vec(float x, float y, float z)
     joint4_vec << x, y, z;
 }
 
-float convert_Byte_to_Float(std::vector<unsigned char> &data)
+// float Robot::convert_Byte_to_Float(std::vector<unsigned char> &data)
+// {
+//     uint8_t bytes[sizeof(float)];
+//     for (int i = 0; i < 4; i++)
+//     {
+//         bytes[i] = data[i];
+//     }
+//     float x_p = *(float *)(bytes); // convert bytes back to float
+//     return x_p;
+// }
+
+
+void Robot::set_Target_vec(std::vector<unsigned char> &data)
 {
-    uint8_t bytes[sizeof(float)];
+    // convert bytes back to float
+    uint8_t bytes1[sizeof(float)];
+    uint8_t bytes2[sizeof(float)];
+    uint8_t bytes3[sizeof(float)];
+
     for (int i = 0; i < 4; i++)
     {
-        bytes[i] = data[i];
+        bytes1[i] = data[i];
+        bytes2[i] = data[i+4];
+        bytes3[i] = data[i+8];
+
     }
-    float x_p = *(float *)(bytes); // convert bytes back to float
-    return x_p;
+    float x_p = *(float *)(bytes1); // convert bytes back to float
+    float y_p = *(float *)(bytes2); // convert bytes back to float
+    float z_p = *(float *)(bytes3); // convert bytes back to float
+
+    printf("float %.1f\r\n", x_p);
+    printf("float %.1f\r\n", y_p);
+    printf("float %.1f\r\n", z_p);
+
+    std::vector<float> t_vec;
+
+    t_vec.push_back(x_p);
+    t_vec.push_back(y_p);
+    t_vec.push_back(z_p);
+
+    printf("%f\r\n", t_vec[0]);
+    printf("%f\r\n", t_vec[1]);
+    printf("%f\r\n", t_vec[2]);
+
+    target_vec = t_vec;
 }
 
-void Robot::set_Target_vec(std::vector<unsigned char> data)
-{
-    float_data = convert_Byte_to_Float(data);
-    target_vec = float_data;
-}
-std::vector<float> Robot::get_target_vec()
-{
-    return target_vec;
-}
+// std::vector<float> Robot::get_target_vec()
+// {
+//     return target_vec;
+// }
 
 
 
 float Robot::joint1_angle = M_PI / 2;
 float Robot::joint2_angle = M_PI / 2;
 float Robot::joint3_angle = M_PI / 2;
-std::vector<float> target_vec;
+std::vector<float> Robot::target_vec;
 Eigen::MatrixXd Robot::joint4_vec(3, 1);
 
 //ある関節(θ1, θ2, θ3)を入れて、今の手先座標(x,y,z)を返す関数

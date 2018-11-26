@@ -1,19 +1,19 @@
 #include "Connection.h"
 #include "Robot.h"
 
-std::vector<float> Connection::get_trajectory(){
+std::vector<float> Connection::get_trajectory()
+{
     return trajectory_vec_list;
 }
-void Connection::set_trajectory(std::vector<float> vec_list){
+void Connection::set_trajectory(std::vector<float> vec_list)
+{
     trajectory_vec_list = vec_list;
 }
 
 int Connection::open()
 {
-
     FILE *fp; // FILE型構造体
     char fname[] = "input.in";
-
     fp = fopen(fname, "r"); // ファイルを開く。失敗するとNULLを返す。
     if (fp == NULL)
     {
@@ -24,19 +24,14 @@ int Connection::open()
     {
         std::vector<float> vec_list;
         float data;
-        int counter =0;
+        int counter = 0;
         while (fscanf(fp, "%f", &data) != EOF)
         {
-            vec_list.push_back(data);
-        //     printf("%f\n", data);
-
-        //     if(counter % 4 != 0){
-        //         vec_list.push_back(data);
-        //     }
-        //     counter +=1;
-        // }
-        // for (int i = 0; i < 10; i++){
-        //     printf("%f", vec_list[i]);
+            if (counter != 3 && counter != 7 && counter != 11 && counter != 15 && counter != 19 && counter != 23 && counter != 27)
+            {
+                vec_list.push_back(data);
+            }
+            counter += 1;
         }
         Connection connection;
         connection.set_trajectory(vec_list);
@@ -62,15 +57,16 @@ int Connection::close()
     }
 };
 
-
-int Connection::send(std::vector<unsigned char> &data){
+// dataの大きさは12、4,4,4
+int Connection::send(std::vector<unsigned char> &data)
+{
     Robot robot;
     robot.set_Target_vec(data);
+    return 10000;
 };
 
-int Connection::receive(std::vector<unsigned char> &data){
+// int Connection::receive(std::vector<unsigned char> &data){
 
-};
+// };
 
 std::vector<float> Connection::trajectory_vec_list;
-

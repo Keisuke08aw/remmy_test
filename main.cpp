@@ -17,6 +17,7 @@ std::vector<unsigned char> convert_Float_to_Byte(float num)
     data.push_back(bytes[3]);
 
     printf("data = [ %d, %d, %d, %d]\r\n", data[0], data[1], data[2], data[3]);
+
     return data;
 }
 
@@ -30,47 +31,48 @@ float convert_Byte_to_Float(std::vector<unsigned char> &data)
     }
     float x_p = *(float *)(bytes); // convert bytes back to float
 
-    printf("float %f\r\n", x_p);
+    // printf("float %f\r\n", x_p);
     return x_p;
 }
 
 int main(int argc, char const *argv[])
 {
     Connection connection;
+    //input.inをすべて読み込み、connectionのメンバ変数にセット
+
     connection.open();
+    //すべての座標を取得
     std::vector<float> trajectory_vec_list = connection.get_trajectory();
-    printf("%f\r\n", trajectory_vec_list[0]);
-    printf("%f\r\n", trajectory_vec_list[1]);
-    printf("%f\r\n", trajectory_vec_list[2]);
 
-    //とりあえずxについて
-    std::vector<unsigned char> target_x1 = convert_Float_to_Byte(trajectory_vec_list[0]);
-    std::vector<unsigned char> target_x2 = convert_Float_to_Byte(trajectory_vec_list[1]);
-    target_x1.insert(target_x1.end(), target_x2.begin(), target_x2.end());
-    std::vector<unsigned char> target_x3 = convert_Float_to_Byte(trajectory_vec_list[2]);
-    target_x1.insert(target_x1.end(), target_x3.begin(), target_x3.end());
+    //trajectory_vec_list ={20.0, 0.0, 0.0, 17.0, 0.0, ....}
+    float x = trajectory_vec_list[0];
+    float y = trajectory_vec_list[1];
+    float z = trajectory_vec_list[2];
 
-    //試しにx座標を4bytesにしてみた
-    printf("%d\r\n", target_x1[0]);
-    printf("%d\r\n", target_x1[1]);
-    printf("%d\r\n", target_x1[2]);
-    printf("%d\r\n", target_x1[3]);
+    printf("%f\r\n", x);
+    printf("%f\r\n", y);
+    printf("%f\r\n", z);
 
-    std::vector<unsigned char> target_vec;
-    for (int i = 0; i < 4; i++){
-        target_vec.push_back(target_x1[i]);
-    }
-    for (int i = 0; i < 4; i++)
-    {
-        target_vec.push_back(target_y1[i]);
-    }
-    for (int i = 0; i < 4; i++)
-    {
-        target_vec.push_back(target_z1[i]);
-    }
-    connection.send(target_vec);
+    std::vector<unsigned char> target_p;
+    std::vector<unsigned char> target_x = convert_Float_to_Byte(x);
+    std::vector<unsigned char> target_y = convert_Float_to_Byte(y);
+    std::vector<unsigned char> target_z = convert_Float_to_Byte(z);
 
-    // convert_Byte_to_Float(result);
+    target_p.insert(target_p.end(), target_x.begin(), target_x.end());
+    target_p.insert(target_p.end(), target_y.begin(), target_y.end());
+    target_p.insert(target_p.end(), target_z.begin(), target_z.end());
+
+    printf("%d\r\n", target_p[0]);
+    printf("%d\r\n", target_p[1]);
+    printf("%d\r\n", target_p[2]);
+    printf("%d\r\n", target_p[3]);
+
+    printf("%lu\r\n", target_p.size());
+
+    //std::vector<unsigned char> &data
+    //１点のみ送るだから、data.seiz() == 12;
+    //target_p = {0, 0, 160, 65, 0, 0, 0, 0...}
+    connection.send(target_p);
 
     Robot robot;
 
@@ -94,8 +96,8 @@ int main(int argc, char const *argv[])
     robot.set_Joint4_vec(px, py, pz);
     // qi_1 = robot.inverse_kinematics(target_vec);
 
-    while ((float)robot.delta(target_vec) != 0.0)
-    {
+    // while ((float)robot.delta(target_vec) != 0.0)
+    // {
     //     float delta_xyz =robot.delta(target_vec);
     //     // printf("%f\r\n", delta_xyz);
 
@@ -117,11 +119,7 @@ int main(int argc, char const *argv[])
 
     //     //手先座標をセットする
     //     robot.set_Joint4_vec(px, py, pz);
-
-    
-    }
-
-
+    // }
 
     return 0;
 }
