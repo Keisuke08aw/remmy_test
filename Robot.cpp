@@ -7,6 +7,11 @@
 #include <iostream>
 #define _USE_MATH_DEFINES
 
+std::vector<float> Robot::get_target_vec()
+{
+    return target_vec;
+}
+
 float Robot::get_Joint1Angle()
 {
     return joint1_angle;
@@ -46,20 +51,11 @@ void Robot::set_Joint4_vec(float x, float y, float z)
     joint4_vec << x, y, z;
 }
 
-// float Robot::convert_Byte_to_Float(std::vector<unsigned char> &data)
-// {
-//     uint8_t bytes[sizeof(float)];
-//     for (int i = 0; i < 4; i++)
-//     {
-//         bytes[i] = data[i];
-//     }
-//     float x_p = *(float *)(bytes); // convert bytes back to float
-//     return x_p;
-// }
-
 
 void Robot::set_Target_vec(std::vector<unsigned char> &data)
 {
+    printf("/////Robot.cpp set_Target_vec/////\r\n");
+
     // convert bytes back to float
     uint8_t bytes1[sizeof(float)];
     uint8_t bytes2[sizeof(float)];
@@ -86,18 +82,14 @@ void Robot::set_Target_vec(std::vector<unsigned char> &data)
     t_vec.push_back(y_p);
     t_vec.push_back(z_p);
 
-    printf("%f\r\n", t_vec[0]);
-    printf("%f\r\n", t_vec[1]);
-    printf("%f\r\n", t_vec[2]);
+    printf("t_vec x is set %.2f\r\n", t_vec[0]);
+    printf("t_vec y is set %.2f\r\n", t_vec[1]);
+    printf("t_vec z is set %.2f\r\n", t_vec[2]);
 
     target_vec = t_vec;
+    printf("/////Robot.cpp set_Target_vec END /////\r\n\r\n");
+
 }
-
-// std::vector<float> Robot::get_target_vec()
-// {
-//     return target_vec;
-// }
-
 
 
 float Robot::joint1_angle = M_PI / 2;
