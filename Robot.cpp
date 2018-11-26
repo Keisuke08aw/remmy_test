@@ -27,9 +27,9 @@ float Robot::get_Joint3Angle()
     return joint3_angle;
 }
 
-Eigen::MatrixXd Robot::get_Joint4_vec()
+Eigen::MatrixXd Robot::get_EndEffector_vec()
 {
-    return joint4_vec;
+    return EndEffector_vec;
 }
 
 void Robot::set_Joint1Angle(float radian)
@@ -46,57 +46,53 @@ void Robot::set_Joint3Angle(float radian)
 {
     joint3_angle = radian;
 }
-void Robot::set_Joint4_vec(float x, float y, float z)
+void Robot::set_EndEffector_vec(float x, float y, float z)
 {
-    joint4_vec << x, y, z;
+    EndEffector_vec << x, y, z;
 }
 
+// void Robot::set_Target_vec(std::vector<unsigned char> &data)
+// {
+//     printf("/////Robot.cpp set_Target_vec/////\r\n");
 
-void Robot::set_Target_vec(std::vector<unsigned char> &data)
-{
-    printf("/////Robot.cpp set_Target_vec/////\r\n");
+//     // convert bytes back to float
+//     uint8_t bytes1[sizeof(float)];
+//     uint8_t bytes2[sizeof(float)];
+//     uint8_t bytes3[sizeof(float)];
 
-    // convert bytes back to float
-    uint8_t bytes1[sizeof(float)];
-    uint8_t bytes2[sizeof(float)];
-    uint8_t bytes3[sizeof(float)];
+//     for (int i = 0; i < 4; i++)
+//     {
+//         bytes1[i] = data[i];
+//         bytes2[i] = data[i + 4];
+//         bytes3[i] = data[i + 8];
+//     }
+//     float x_p = *(float *)(bytes1); // convert bytes back to float
+//     float y_p = *(float *)(bytes2); // convert bytes back to float
+//     float z_p = *(float *)(bytes3); // convert bytes back to float
 
-    for (int i = 0; i < 4; i++)
-    {
-        bytes1[i] = data[i];
-        bytes2[i] = data[i+4];
-        bytes3[i] = data[i+8];
+//     printf("float %.1f\r\n", x_p);
+//     printf("float %.1f\r\n", y_p);
+//     printf("float %.1f\r\n", z_p);
 
-    }
-    float x_p = *(float *)(bytes1); // convert bytes back to float
-    float y_p = *(float *)(bytes2); // convert bytes back to float
-    float z_p = *(float *)(bytes3); // convert bytes back to float
+//     std::vector<float> t_vec;
 
-    printf("float %.1f\r\n", x_p);
-    printf("float %.1f\r\n", y_p);
-    printf("float %.1f\r\n", z_p);
+//     t_vec.push_back(x_p);
+//     t_vec.push_back(y_p);
+//     t_vec.push_back(z_p);
 
-    std::vector<float> t_vec;
+//     printf("t_vec x is set %.2f\r\n", t_vec[0]);
+//     printf("t_vec y is set %.2f\r\n", t_vec[1]);
+//     printf("t_vec z is set %.2f\r\n", t_vec[2]);
 
-    t_vec.push_back(x_p);
-    t_vec.push_back(y_p);
-    t_vec.push_back(z_p);
-
-    printf("t_vec x is set %.2f\r\n", t_vec[0]);
-    printf("t_vec y is set %.2f\r\n", t_vec[1]);
-    printf("t_vec z is set %.2f\r\n", t_vec[2]);
-
-    target_vec = t_vec;
-    printf("/////Robot.cpp set_Target_vec END /////\r\n\r\n");
-
-}
-
+//     target_vec = t_vec;
+//     printf("/////Robot.cpp set_Target_vec END /////\r\n\r\n");
+// }
 
 float Robot::joint1_angle = M_PI / 2;
 float Robot::joint2_angle = M_PI / 2;
 float Robot::joint3_angle = M_PI / 2;
 std::vector<float> Robot::target_vec;
-Eigen::MatrixXd Robot::joint4_vec(3, 1);
+Eigen::MatrixXd Robot::EndEffector_vec(3, 1);
 
 //ある関節(θ1, θ2, θ3)を入れて、今の手先座標(x,y,z)を返す関数
 std::vector<float> Robot::direct_kinematics(Eigen::MatrixXd vec_joint_angle)
@@ -149,133 +145,118 @@ std::vector<float> Robot::direct_kinematics(Eigen::MatrixXd vec_joint_angle)
 }
 
 //ある手先座標(x,y,z)を入れて、次の関節の角度(θ1, θ2, θ3, θ4)を返す関数
-Eigen::MatrixXd Robot::inverse_kinematics(std::vector<float> target_vec)
+int Robot::inverse_kinematics(std::vector<unsigned char> &data)
 {
-    // printf("AAAAAAAAAAAAAAAAAAAA\r\n");
-    Robot robot;
+    printf("/////Robot.cpp inverse_Kinematics/////\r\n");
+    // convert bytes back to float
+    uint8_t bytes1[sizeof(float)];
+    uint8_t bytes2[sizeof(float)];
+    uint8_t bytes3[sizeof(float)];
 
+    for (int i = 0; i < 4; i++)
+    {
+        bytes1[i] = data[i];
+        bytes2[i] = data[i + 4];
+        bytes3[i] = data[i + 8];
+    }
+    //これがターゲットのx,y,z座標
+    float x_p = *(float *)(bytes1); // convert bytes back to float
+    float y_p = *(float *)(bytes2); // convert bytes back to float
+    float z_p = *(float *)(bytes3); // convert bytes back to float
+
+    printf("float %.1f\r\n", x_p);
+    printf("float %.1f\r\n", y_p);
+    printf("float %.1f\r\n", z_p);
+
+    int result;
+    Robot robot;
     Eigen::MatrixXd qi_1(3, 1);
     Eigen::MatrixXd qi(3, 1);
     Eigen::MatrixXd learning_rate(3, 3);
     Eigen::MatrixXd inv_Jacobian(3, 3);
     Eigen::MatrixXd Jacobian(3, 3);
     Eigen::MatrixXd ri(3, 1);
-
-    float target_x = target_vec[0];
-    float target_y = target_vec[1];
-    float target_z = target_vec[2];
-
-    Eigen::MatrixXd vec_p = robot.get_Joint4_vec();
-    float eng_effecotr_x = vec_p(0);
-    float eng_effecotr_y = vec_p(1);
-    float eng_effecotr_z = vec_p(2);
-
-    float delta_x = sqrt(pow((target_x - eng_effecotr_x), 2));
-    float delta_y = sqrt(pow((target_y - eng_effecotr_y), 2));
-    float delta_z = sqrt(pow((target_z - eng_effecotr_z), 2));
-
-    float rad1 = robot.get_Joint1Angle();
-    float rad2 = robot.get_Joint2Angle();
-    float rad3 = robot.get_Joint3Angle();
-
-    // printf("rad1 %f\r\n", rad1);
-    // printf("rad2 %f\r\n", rad2);
-    // printf("rad3 %f\r\n", rad3);
-
-    // printf("BBBBBBBBBBBBBBBBBB\r\n");
-
-    Jacobian(0, 0) = -sin(rad1) * cos(rad2) * (5 * cos(rad3) + 5) + (-sin(rad1)) * (5 * sin(rad2) * sin(rad3) + 10);
-    Jacobian(0, 1) = cos(rad1) * (-sin(rad2)) * (5 * cos(rad3) + 5) + 0;
-    Jacobian(0, 2) = cos(rad1) * cos(rad2) * 5 * (-sin(rad3)) + cos(rad1) * 5 * sin(rad2) * cos(rad3);
-
-    Jacobian(1, 0) = 5 * cos(rad1) * cos(rad2) * (cos(rad3) + 1) + 5 * cos(rad1) * (sin(rad2) * sin(rad3) + 2);
-    Jacobian(1, 1) = 5 * sin(rad1) * (-sin(rad2)) * (cos(rad3) + 1) + 5 * sin(rad1) * cos(rad2) * sin(rad3);
-    Jacobian(1, 2) = 5 * sin(rad1) * cos(rad2) * (-sin(rad3)) + 5 * sin(rad1) * sin(rad2) * cos(rad3);
-
-    Jacobian(2, 0) = 0.0;
-    Jacobian(2, 1) = -5 * cos(rad2) * (cos(rad3) + 1) - 5 * cos(rad2) * sin(rad3);
-    Jacobian(2, 2) = -5 * sin(rad2) * (-sin(rad3)) + 5 * cos(rad2) * cos(rad3);
-
-    // printf("Jacobian\r\n");
-
-    // std::cout << Jacobian << std::endl;
-    // Eigen::MatrixXd transposed_Jacobian = Jacobian.transpose();
-    // std::cout << transposed_Jacobian << std::endl;
-    // Eigen::MatrixXd JJ = (Jacobian * transposed_Jacobian);
-    // Eigen::MatrixXd inv_JJ = JJ.inverse();
-    // Eigen::MatrixXd pseudo_Jacobian = transposed_Jacobian * inv_JJ;
-    // std::cout << Jacobian << std::endl;
-    // std::cout << JJ << std::endl;
-    // std::cout << inv_JJ << std::endl;
-    // std::cout << pseudo_Jacobian << std::endl;
-
-    // printf("CCCCCCCCCCCCCCCCCCCCC\r\n\r\n");
-
-    //逆ヤコビアン
-    // printf("inv_Jacobian\r\n");
-    inv_Jacobian = Jacobian.inverse();
-    // std::cout << inv_Jacobian << std::endl;
-
-    // printf("DDDDDDDDDDDDDDDDDD\r\n");
-
-    //今の各関節のjointのangleをget
-    qi << rad1, rad2, rad3;
-
-    // printf("EEEEEEEEEEEEEEEEEEEEE\r\n");
-
-    //手先が目標に対してどれだけ離れているか計算
-    ri << delta_x, delta_y, delta_z;
-
-    // printf("FFFFFFFFFFFFFFFFFFF\r\n");
+    float target_x = x_p;
+    float target_y = y_p;
+    float target_z = z_p;
+    Eigen::MatrixXd end_effector_vec;
+    float end_x;
+    float end_y;
+    float end_z;
+    float delta_xyz;
+    float delta_x;
+    float delta_y;
+    float delta_z;
+    float rad1;
+    float rad2;
+    float rad3;
 
     //学習率
     learning_rate << 1.8, 0, 0,
         0, 1.8, 0,
         0, 0, 1.8;
+    try
+    {
+        while (true)
+        {
+            rad1 = robot.get_Joint1Angle();
+            rad2 = robot.get_Joint2Angle();
+            rad3 = robot.get_Joint3Angle();
 
-    // printf("GGGGGGGGGGGGGGGGGGGGG\r\n");
+            //目標座標と今の手の位置との距離を求める
+            delta_xyz = sqrt(pow((target_x - end_effector_vec(0)), 2) + pow((target_y - end_effector_vec(1)), 2) + pow((target_z - end_effector_vec(2)), 2));
+            if (delta_xyz < 0.5)
+            {
+                qi << rad1, rad2, rad3;
+                std::vector<float> nearest_end_vec = robot.direct_kinematics(qi);
+                robot.set_EndEffector_vec(nearest_end_vec[0], nearest_end_vec[1], nearest_end_vec[2]);
+                result = true;
+                break;
+            }
 
-    // std::cout << qi << std::endl;
-    // std::cout << learning_rate << std::endl;
-    // std::cout << inv_Jacobian << std::endl;
-    // std::cout << ri << std::endl;
+            Jacobian(0, 0) = -sin(rad1) * cos(rad2) * (5 * cos(rad3) + 5) + (-sin(rad1)) * (5 * sin(rad2) * sin(rad3) + 10);
+            Jacobian(0, 1) = cos(rad1) * (-sin(rad2)) * (5 * cos(rad3) + 5) + 0;
+            Jacobian(0, 2) = cos(rad1) * cos(rad2) * 5 * (-sin(rad3)) + cos(rad1) * 5 * sin(rad2) * cos(rad3);
 
-    // printf("HHHHHHHHHHHHHHHHHH\r\n");
+            Jacobian(1, 0) = 5 * cos(rad1) * cos(rad2) * (cos(rad3) + 1) + 5 * cos(rad1) * (sin(rad2) * sin(rad3) + 2);
+            Jacobian(1, 1) = 5 * sin(rad1) * (-sin(rad2)) * (cos(rad3) + 1) + 5 * sin(rad1) * cos(rad2) * sin(rad3);
+            Jacobian(1, 2) = 5 * sin(rad1) * cos(rad2) * (-sin(rad3)) + 5 * sin(rad1) * sin(rad2) * cos(rad3);
 
-    qi_1 = qi + learning_rate * inv_Jacobian * ri;
-    // Eigen::MatrixXd v1 = learning_rate * inv_Jacobian;
-    // Eigen::MatrixXd v2 = v1 * ri;
-    // printf("HHHHHHHHHHHHHHHHHH\r\n");
+            Jacobian(2, 0) = 0.0;
+            Jacobian(2, 1) = -5 * cos(rad2) * (cos(rad3) + 1) - 5 * cos(rad2) * sin(rad3);
+            Jacobian(2, 2) = -5 * sin(rad2) * (-sin(rad3)) + 5 * cos(rad2) * cos(rad3);
 
-    // qi_1 = qi + v2;
+            end_effector_vec = robot.get_EndEffector_vec();
 
-    // printf("IIIIIIIIIIIIIIIIIIII\r\n");
+            delta_x = sqrt(pow((target_x - end_effector_vec(0)), 2));
+            delta_y = sqrt(pow((target_y - end_effector_vec(1)), 2));
+            delta_z = sqrt(pow((target_z - end_effector_vec(2)), 2));
 
-    // std::cout << qi_1 << std::endl;
+            qi << rad1, rad2, rad3;
+            ri << delta_x, delta_y, delta_z;
+            inv_Jacobian = Jacobian.inverse();
 
-    // printf("JJJJJJJJJJJJJJJJJJJ\r\n");
+            //新しいθ1~θ3
+            qi_1 = qi + learning_rate * inv_Jacobian * ri;
+            //θ1~θ3を登録
+            robot.set_Joint1Angle(qi_1(0));
+            robot.set_Joint1Angle(qi_1(1));
+            robot.set_Joint1Angle(qi_1(2));
 
-    return qi_1;
-}
+            std::vector<float> now_end_effector_vec = robot.direct_kinematics(qi_1);
+            printf("%.2f", now_end_effector_vec[0]);
+            printf("%.2f", now_end_effector_vec[1]);
+            printf("%.2f", now_end_effector_vec[2]);
 
-float Robot::delta(std::vector<float> target_vec)
-{
-    // printf("AAAAAAAAAAAAAAAAAAAA\r\n");
-    Robot robot;
+            robot.set_EndEffector_vec(now_end_effector_vec[0], now_end_effector_vec[1], now_end_effector_vec[2]);
+        }
+    }
 
-    Eigen::MatrixXd ri(3, 1);
-
-    float target_x = target_vec[0];
-    float target_y = target_vec[1];
-    float target_z = target_vec[2];
-
-    Eigen::MatrixXd vec_p = robot.get_Joint4_vec();
-    float eng_effecotr_x = vec_p(0);
-    float eng_effecotr_y = vec_p(1);
-    float eng_effecotr_z = vec_p(2);
-
-    float delta_xyz = sqrt(pow((target_x - eng_effecotr_x), 2) + pow((target_y - eng_effecotr_y), 2) + pow((target_z - eng_effecotr_z), 2));
-    //手先が目標に対してどれだけ離れているか計算
-
-    return delta_xyz;
+    catch (std::exception e)
+    {
+        printf("ERROR HAPPENS\r\n");
+        result = false;
+    }
+    printf("/////Robot.cpp inverse_Kinematics/////\r\n");
+    return result;
 }

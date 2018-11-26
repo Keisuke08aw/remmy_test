@@ -61,8 +61,10 @@ int Connection::close()
 int Connection::send(std::vector<unsigned char> &data)
 {
     Robot robot;
-    robot.set_Target_vec(data);
-    return 10000;
+    int result;
+    //ロボットに手先座標(x, y, z)をコントロールシグナルとして送る
+    result = robot.inverse_kinematics(data);
+    return result;
 };
 
 // int Connection::receive(std::vector<unsigned char> &data){
