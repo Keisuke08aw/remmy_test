@@ -63,12 +63,6 @@ int main(int argc, char const *argv[])
         float z = trajectory_vec_list[i + 2];
 
         byte_target_p = convert_Float_to_Byte(x, y, z);
-        //        target_y = convert_Float_to_Byte(y);
-        //        target_z = convert_Float_to_Byte(z);
-
-        //        target_p.insert(target_p.end(), byte_target_p.begin(), target_x.end());
-        //        target_p.insert(target_p.end(), target_y.begin(), target_y.end());
-        //        target_p.insert(target_p.end(), target_z.begin(), target_z.end());
 
         // set first joint angles
         float rad1 = -(float)M_PI;
