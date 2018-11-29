@@ -1,3 +1,10 @@
+//
+// Created by Keisuke Umezawa on 2018/11/27.
+//
+
+#ifndef REMY_ROBOT_H
+#define REMY_ROBOT_H
+
 #include <vector>
 #include <stdio.h>
 #include "Eigen/Core"
@@ -11,8 +18,7 @@ private:
   static float joint2_angle;
   static float joint3_angle;
   //x, y, z
-  static std::vector<float> EndEffector_vec;
-
+  static std::vector<float> end_effector_vec;
   static std::vector<float> target_vec;
 
 public:
@@ -26,7 +32,9 @@ public:
   void set_Joint1Angle(float radian);
   void set_Joint2Angle(float radian);
   void set_Joint3Angle(float radian);
-  void set_EndEffector_vec(float &x, float &y, float &z);
+  void set_EndEffector_vec(std::vector<float> end_vec);
+  std::vector<float> convert_Byte_to_Float(std::vector<unsigned char> &data);
+  std::vector<unsigned char> convert_Float_to_Byte(float x, float y, float z);
 
   //ある関節(θ1, θ2, θ3)を入れて、今の手先座標(x,y,z)を返す関数
   std::vector<float> direct_kinematics(Eigen::MatrixXd vec_joint_angle);
@@ -38,3 +46,5 @@ public:
   {
   }
 };
+
+#endif //REMY_ROBOT_H
