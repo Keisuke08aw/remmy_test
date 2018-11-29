@@ -66,7 +66,7 @@ int main(int argc, char const *argv[])
 
         // set first joint angles
         float rad1 = -(float)M_PI;
-        float rad2 = -(float)M_PI / 4;
+        float rad2 = -(float)0.0;
         float rad3 = (float)M_PI / 2;
 
         //set initial position of the robot arm
